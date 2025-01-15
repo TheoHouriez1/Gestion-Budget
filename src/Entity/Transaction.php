@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\TransactionRepository;
@@ -16,8 +15,9 @@ class Transaction
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $category = null;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;  // Remplacement de la colonne 'category' par une relation ManyToOne
 
     #[ORM\Column(length: 400)]
     private ?string $description = null;
@@ -41,19 +41,17 @@ class Transaction
     public function setType(string $type): static
     {
         $this->type = $type;
-
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getCategory(): ?Category  // Méthode getter mise à jour pour la relation ManyToOne
     {
         return $this->category;
     }
 
-    public function setCategory(string $category): static
+    public function setCategory(?Category $category): static  // Méthode setter mise à jour pour la relation ManyToOne
     {
         $this->category = $category;
-
         return $this;
     }
 
@@ -65,7 +63,6 @@ class Transaction
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -77,7 +74,6 @@ class Transaction
     public function setMontant(float $montant): static
     {
         $this->montant = $montant;
-
         return $this;
     }
 
@@ -89,7 +85,6 @@ class Transaction
     public function setCompte(?CompteBudget $Compte): static
     {
         $this->Compte = $Compte;
-
         return $this;
     }
 }
