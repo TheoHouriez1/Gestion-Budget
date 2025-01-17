@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import { keepTheme } from "keep-react/keepTheme";
+
 module.exports = {
   content: [
     "./assets/**/*.js",
@@ -11,4 +13,6 @@ module.exports = {
   },
   plugins: [],
 }
+
+export default keepTheme(config);
 
