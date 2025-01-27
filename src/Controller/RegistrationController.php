@@ -46,7 +46,8 @@ class RegistrationController extends AbstractController
             // Crée un compte pour l'utilisateur
             $compte = new CompteBudget();
             $compte->setUser($user);    // Associe l'utilisateur au compte
-            $compte->setSolde(0);       // Solde initial à 0
+            $compte->setSolde(0);   
+            $compte->setnamecompte("Compte Courant");   
 
             // Persist le compte
             $entityManager->persist($compte);

@@ -28,6 +28,9 @@ class CompteBudget
     #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'Compte')]
     private Collection $transactions;
 
+    #[ORM\Column(length: 255)]
+    private ?string $namecompte = null;
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
@@ -88,6 +91,18 @@ class CompteBudget
                 $transaction->setCompte(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNamecompte(): ?string
+    {
+        return $this->namecompte;
+    }
+
+    public function setNamecompte(string $namecompte): static
+    {
+        $this->namecompte = $namecompte;
 
         return $this;
     }
