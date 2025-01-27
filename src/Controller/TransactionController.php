@@ -55,6 +55,7 @@ final class TransactionController extends AbstractController
             // Si le type est "Dépense", on soustrait du solde
             if ($transaction->getType() === 'depense') {
                 $compte->setSolde($compte->getSolde() - $transaction->getMontant());
+                $transaction->setMontant(-abs($transaction->getMontant())); 
             }
     
             // Sauvegarde les modifications dans la base de données

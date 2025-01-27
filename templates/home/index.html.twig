@@ -3,7 +3,7 @@
 {% block title %}Dashboard Bancaire{% endblock %}
 
 {% block stylesheets %}
-    <style>
+        <style>
         * {
             margin: 0;
             padding: 0;
@@ -135,7 +135,29 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
+        .action-button-small {
+            background: #ffffff;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #4a5568;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            width: 30px; /* Taille plus petite */
+            height: 40px; /* Taille plus petite */
+            font-size: 14px; /* Taille de police plus petite */
+        }
 
+        .quick-trans {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .action-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -146,7 +168,7 @@
 {% block body %}
     <div class="container">
         <header class="header">
-        <h1>Hello, {{prenom}} {{nom}}</h1>
+            <h1>Hello, {{ prenom }} {{ nom }}</h1>
             <p>Dernière connexion : 27 janvier 2025, 10:30</p>
         </header>
 
@@ -160,45 +182,31 @@
         {% for compte in compteBudgets %}
         <section class="balance-cards">
             <div class="card primary">
-                <h2>Compte Courant</h2>
-                <div class="amount">{{compte.solde }} €</div>
-                <p>N° {{compte.id}}</p>   
+                <h2>{{ compte.namecompte }}</h2>
+                <div class="amount">{{ compte.solde }} €</div>
+                <p>N° {{ compte.id }}</p>   
             </div>
-            {% endfor %}
+        {% endfor %}
 
         </section>
 
         <section class="transactions">
-            <h2>Dernières transactions</h2>
+        <div class ="quick-trans" >
+            <h2>transactions</h2>
+            <button class="action-button-small" >+</button>
+        </div>
             <ul class="transaction-list">
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Supermarché Casino</div>
-                        <div class="transaction-date">27 jan. 2025</div>
-                    </div>
-                    <div class="transaction-amount negative">-82.45 €</div>
-                </li>
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Salaire</div>
-                        <div class="transaction-date">25 jan. 2025</div>
-                    </div>
-                    <div class="transaction-amount positive">+2,450.00 €</div>
-                </li>
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Restaurant Le Petit Bistrot</div>
-                        <div class="transaction-date">24 jan. 2025</div>
-                    </div>
-                    <div class="transaction-amount negative">-48.90 €</div>
-                </li>
-                <li class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-title">EDF</div>
-                        <div class="transaction-date">23 jan. 2025</div>
-                    </div>
-                    <div class="transaction-amount negative">-75.32 €</div>
-                </li>
+                {% for transaction in transactions %}
+                    <li class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-title">{{ transaction.description }}</div>
+                            <div class="transaction-date"></div>
+                        </div>
+                        <div class="transaction-amount {% if transaction.montant > 0 %}positive{% else %}negative{% endif %}">
+                            {{ transaction.montant }} €
+                        </div>
+                    </li> 
+                {% endfor %}
             </ul>
         </section>
     </div>
