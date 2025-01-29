@@ -1,0 +1,205 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+{% block stylesheets %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: center; /* Centre le contenu horizontalement */
+            align-items: center;     /* Centre le contenu verticalement */
+            min-height: 100vh;       /* Prend toute la hauteur de la fenêtre */
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .table-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            width: 100%;
+            max-width: 1000px; /* Limite la largeur du tableau */
+            display: flex;
+            justify-content: center; /* Centrer la table */
+        }
+
+        .table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            display: block; /* Permet au tableau de prendre toute la largeur sur mobile */
+            overflow-x: auto; /* Permet un défilement horizontal */
+            -webkit-overflow-scrolling: touch; /* Améliore l'expérience sur les appareils tactiles */
+        }
+
+        .table th {
+            background-color: #f7fafc;
+            padding: 12px;
+            color: #4a5568;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table td:last-child {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-new {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .btn-show,
+        .btn-edit {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .btn-show {
+            background-color: #4299e1;
+        }
+
+        .btn-edit {
+            background-color: #ecc94b;
+        }
+
+        .montant-positif {
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .montant-negatif {
+            color: #e53e3e;
+            font-weight: 600;
+        }
+
+        .no-records {
+            text-align: center;
+            color: #718096;
+            padding: 20px;
+        }
+
+        /* Styles pour les petits écrans */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .table th,
+            .table td {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .btn-show,
+            .btn-edit {
+                flex: 1;
+                max-width: 140px;
+            }
+
+            /* Centrer le tableau sur les petits écrans */
+            .table-container {
+                display: block;
+                overflow-x: auto;
+                padding: 10px;
+                width: 100%;
+                max-width: none;
+            }
+
+            .table {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+        <header class="header">
+            <h1>Users</h1>
+            <a href="{{ path('app_user_new') }}" class="btn-new">Create new</a>
+        </header>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Prenom</th>
+                        <th>Nom</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.nom }}</td>
+                <td>
+                    <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn-show">show</a>
+                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn-edit">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

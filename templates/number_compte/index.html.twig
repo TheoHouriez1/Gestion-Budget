@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CompteBudgetController!{% endblock %}
+{% block title %}CompteBudget index{% endblock %}
 
 {% block stylesheets %}
     <style>
@@ -202,15 +202,6 @@
             color: #718096;
             padding: 20px;
         }
-                    .btn-red {
-            background-color: #C70039;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
 
         /* Responsive styles */
         @media (max-width: 768px) {
@@ -252,42 +243,49 @@
                 display: flex;
                 justify-content: space-between;
             }
-
         }
     </style>
 {% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
-
     <div class="container">
         <header class="header">
-            <h1>Compte connecter acutellement</h1>
+            <h1>Vos compte actuel</h1>
         </header>
-        <div class="form-container">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <th>Email</th>
-                        <th>{{ user_email }}</th>
-                    </tr>
-                    <tr>
-                        <th>Nom</th>
-                        <th>{{ user_last_name }}</th>
-                    </tr>
-                    <tr>
-                        <th>Prenom</th>
-                        <th>{{ user_first_name  }}</th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-            <div class="btn-container">
-                <a href="{{ path('app_home') }}" class="btn-back">Retournée a l'accuil</a>
-                <a href="{{ path('app_logout') }}" class="btn-red">Ce deconnecter</a>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Solde</th>
+                    <th>Namecompte</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+        <tbody>
+        {% for compte_budget in compte_budgets %}
+            <tr>
+                <td>{{ compte_budget.id }}</td>
+                <td>{{ compte_budget.solde }}</td>
+                <td>{{ compte_budget.namecompte }}</td>
+                <td>
+                    <a href="{{ path('app_number_compte_show', {'id': compte_budget.id}) }}" class="btn-show">Voir</a>
+                    <a href="{{ path('app_number_compte_edit', {'id': compte_budget.id}) }}" class="btn-edit">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+   </div>
+        <div class="btn-container">
+                <a href="{{ path('app_home') }}" class="btn-back">Retournée a l'accuil </a>
+                <a href="{{ path('app_number_compte_new') }}" class="btn-new">Crées une nouvelle transaction</a> 
             </div>
-    </div>
+        </div>
 {% endblock %}

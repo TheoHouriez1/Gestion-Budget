@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}New CompteBudget{% endblock %}
 {% block stylesheets %}
     <style>
         * {
@@ -132,46 +132,24 @@
     </style>
 {% endblock %}
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
     <div class="container">
         <header class="header">
-            <h1>Crées un compte</h1>
+            <h1>Crées un nouveau compte</h1>
         </header>
-        <div class="form-container">
-            {{ form_errors(registrationForm) }}
 
-            {{ form_start(registrationForm) }}
-                <div class="form-group">
-                    {{ form_label(registrationForm.prenom) }}
-                    {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(registrationForm.nom) }}
-                    {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(registrationForm.email) }}
-                    {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(registrationForm.plainPassword) }}
-                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                 <div class="form-group">
-                    {{ form_row(registrationForm.agreeTerms, {'attr': {'class': 'form-control'}}) }}
-                </div>
-        </div><br>
-         <div class="form-container">
-                <div class="btn-container">
-                    <button type="submit" class="btn-save">Register</button> 
-                    <button type="button" class="btn-back" onclick="window.location.href='{{ path('app_login') }}'">Déja un compte ?</button>
-
-                </div>
+    <div class="form-container">
+        {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_label(form.namecompte) }}
+                {{ form_widget(form.namecompte, {'attr': {'class': 'form-control'}}) }}
             </div>
-            {{ form_end(registrationForm) }}
+    </div><br>
+    <div class="form-container">
+        <div class="btn-container">      
+            <button type="button" class="btn-back" onclick="window.location.href='{{ path('app_number_compte_index') }}'">Retour</button>
+            <button type="submit" class="btn-save">{{ button_label|default('Sauvegarder') }}</button>
+        </div>
+    </div>
+ {{ form_end(form) }}
+    
 {% endblock %}
- 

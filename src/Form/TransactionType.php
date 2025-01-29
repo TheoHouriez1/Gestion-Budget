@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class TransactionType extends AbstractType
 {
@@ -38,6 +39,10 @@ class TransactionType extends AbstractType
             ])
             ->add('montant', NumberType::class, [
                 'label' => 'Montant',
+            ])
+            ->add('id', HiddenType::class, [
+                'label' => 'id',
+                
             ])
         ;
     }

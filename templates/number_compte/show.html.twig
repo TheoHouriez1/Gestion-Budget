@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Transaction{% endblock %}
+{% block title %}CompteBudget{% endblock %}
 {% block stylesheets %}
     <style>
         * {
@@ -139,40 +139,35 @@
     </style>
 {% endblock %}
 
-
 {% block body %}
-    <div class="container">
+        <div class="container">
 
         <header class="header">
-            <h1>Transaction</h1>
+            <h1>compte</h1>
         </header>
     <div class="form-container">
             <table class="table">
-                <tbody>
-                    <tr>
+                        <tbody>
+                        <tr>
                         <th>Id</th>
-                        <th>{{ transaction.id }}</th>
+                        <th>{{ compte_budget.id }}</th>
                     </tr>
                     <tr>
-                        <th>Type</th>
-                        <th>{{ transaction.type }}</th>
+                        <th>Solde</th>
+                        <th>{{ compte_budget.solde }}</th>
                     </tr>
                     <tr>
-                        <th>Description</th>
-                        <th>{{ transaction.description }}</th>
-                    </tr>
-                    <tr>
-                        <th>Montant</th>
-                        <th>{{ transaction.montant }}</th>
+                        <th>Namecompte</th>
+                        <th>{{ compte_budget.namecompte }}</th>
                     </tr>
                 </tbody>
             </table>
-      </div><br>
-        <div class="header">
-            <a href="{{ path('app_transaction_index') }}" class="btn-back">back to list</a>
+    </div><br>
+ <div class="header">
+            <a href="{{ path('app_transaction_index') }}" class="btn-back">Retour</a>
 
-            <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn-edit">edit</a>
+            <a href="{{ path('app_transaction_edit', {'id': compte_budget.id}) }}" class="btn-edit">Modifier</a>
     
-           <a class=".btn-red"> {{ include('transaction/_delete_form.html.twig') }}</a>
+           <a class=".btn-red"> {{ include('number_compte/_delete_form.html.twig') }}</a>
         </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}Dashboard Bancaire{% endblock %}
 
 {% block stylesheets %}
-        <style>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -40,6 +40,7 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 20px;
+            justify-items: center; /* Assure que les cartes sont centrées dans la grille */
         }
 
         .card {
@@ -47,6 +48,11 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column; /* Pour s'assurer que les éléments à l'intérieur sont bien empilés */
+            justify-content: space-between; /* Assure un espacement uniforme */
+            min-height: 200px; /* Hauteur minimale pour toutes les cartes */
+            width: 100%; /* Occupation de toute la largeur disponible */
         }
 
         .card.primary {
@@ -63,6 +69,11 @@
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: #888;
         }
 
         .transactions {
@@ -170,31 +181,31 @@
         <header class="header">
             <h1>Hello, {{ prenom }} {{ nom }}</h1>
             <p>Dernière connexion : 27 janvier 2025, 10:30</p>
+
+
         </header>
 
         <section class="quick-actions">
-            <button class="action-button">Virement</button>
-            <button class="action-button">Paiement</button>
-            <button class="action-button">RIB</button>
-            <button class="action-button">Carte</button>
+            <button class="action-button" onclick="window.location.href='{{ path('app_transaction_index') }}'">Transaction</button>
+            <button class="action-button" onclick="window.location.href='{{ path('app_compte_budget') }}'">Utilisateur</button>
+            {# <button class="action-button" onclick="window.location.href='{{ path('app_number_compte_index') }}'">Compte</button>
+            <button class="action-button">Carte</button> #}
         </section>
-        
+
         {% for compte in compteBudgets %}
         <section class="balance-cards">
-            <div class="card primary">
-                <h2>{{ compte.namecompte }}</h2>
-                <div class="amount">{{ compte.solde }} €</div>
-                <p>N° {{ compte.id }}</p>   
-            </div>
-        {% endfor %}
-
-        </section>
-
+                    <div class="{% if compte.namecompte == "Compte Courant" %}card primary{% else %}card secondary{% endif %} ">
+                    <h2>{{ compte.namecompte }}</h2>
+                    <div class="amount">{{ compte.solde }} €</div>
+                    <div>N°{{ compte.id }}</div>   
+                </div>
+            </section>
+    {% endfor %}
         <section class="transactions">
-        <div class ="quick-trans" >
-            <h2>transactions</h2>
-            <button class="action-button-small" >+</button>
-        </div>
+            <div class ="quick-trans" >
+                <h2>transactions</h2>
+                <button class="action-button-small" onclick="window.location.href='{{ path('app_transaction_index') }}'">+</button>
+            </div>
             <ul class="transaction-list">
                 {% for transaction in transactions %}
                     <li class="transaction-item">
