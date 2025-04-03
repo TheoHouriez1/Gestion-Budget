@@ -1,156 +1,464 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Transaction{% endblock %}
+{% block title %}Détail de Transaction{% endblock %}
 {% block stylesheets %}
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #7355ff;
+            --secondary-color: #5940db;
+            --accent-color: #00d8a5;
+            --dark-bg: #0e1121;
+            --card-bg: #171a2f;
+            --card-secondary-bg: #21253b;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --positive: #00d8a5;
+            --negative: #ff5c75;
+            --border-radius: 16px;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
-            color: #1a1a1a;
+            background: linear-gradient(135deg, var(--dark-bg), #141830);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 28px 24px;
+            position: relative;
+        }
+
+        /* Floating particles animation */
+        .container::before,
+        .container::after {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            opacity: 0.03;
+            filter: blur(100px);
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        .container::before {
+            top: 10%;
+            right: 10%;
+        }
+
+        .container::after {
+            bottom: 10%;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            background: var(--accent-color);
+            animation-delay: 5s;
         }
 
         .header {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            background: rgba(23, 26, 47, 0.8);
+            padding: 28px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeInDown 0.8s ease-out forwards;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .header h1 {
-            color: #2d3748;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.6rem;
+            background: linear-gradient(90deg, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 0;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        /* Nouvelle classe pour le conteneur de l'en-tête avec l'icône */
+        .header-with-icon {
+            position: relative;
+        }
+
+        /* Style pour l'icône dans l'en-tête */
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 8px 20px rgba(115, 85, 255, 0.3);
+        }
+
+        /* Couleurs spécifiques selon le type de transaction */
+        .income .header-icon {
+            background: linear-gradient(135deg, var(--accent-color), #00b389);
+            box-shadow: 0 8px 20px rgba(0, 216, 165, 0.3);
+        }
+
+        .expense .header-icon {
+            background: linear-gradient(135deg, var(--negative), #ff0040);
+            box-shadow: 0 8px 20px rgba(255, 92, 117, 0.3);
         }
 
         .form-container {
-            background: #ffffff;
+            background: rgba(23, 26, 47, 0.7);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 20px;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 0.2s;
+            transform: translateY(20px);
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 600;
-        }
-
-        .form-control {
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(115, 85, 255, 0.05), transparent 70%);
+            pointer-events: none;
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: left;
         }
 
-        select.form-control {
-            background-color: white;
-            cursor: pointer;
+        .table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px 20px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            width: 40%;
         }
 
-        .btn-container {
+        .table th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table th:last-child {
+            border-top-right-radius: 12px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            width: 60%;
+            text-transform: none;
+        }
+
+        .table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            vertical-align: middle;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .table tr:hover td,
+        .table tr:hover th {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .table tr:first-child th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table tr:first-child th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .table tr:last-child td:first-child,
+        .table tr:last-child th:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .table tr:last-child td:last-child,
+        .table tr:last-child th:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Style for the montant (positive or negative) */
+        .montant-positif {
+            color: var(--positive);
+            font-weight: 700;
+        }
+
+        .montant-positif::before {
+            content: '+';
+        }
+
+        .montant-negatif {
+            color: var(--negative);
+            font-weight: 700;
+        }
+
+        .action-buttons {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 30px;
+            gap: 15px;
         }
 
-        .btn-save {
-            background: linear-gradient(135deg, #4299e1, #3182ce);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
+        .btn-back,
+        .btn-edit,
+        .btn-red {
+            padding: 14px 24px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
         .btn-back {
-            background-color: #718096;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .btn-red {
-            background-color: #C70039;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .btn-edit {
-            background-color: #4299e1;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
+            background: rgba(0, 216, 165, 0.15);
+            color: var(--accent-color);
+            border: 1px solid rgba(0, 216, 165, 0.3);
         }
-        .table th {
-            background-color: #f7fafc;
-            padding: 12px;
-            color: #4a5568;
-            font-weight: 600;
-            text-align: center; /* Aligne les titres des colonnes */
-            border-bottom: 2px solid #e2e8f0;
+
+        .btn-red {
+            background: rgba(255, 92, 117, 0.15);
+            color: var(--negative);
+            border: 1px solid rgba(255, 92, 117, 0.3);
         }
-         .table th,
-            .table td {
-                font-size: 0.9rem; /* Réduit la taille de police */
-                padding: 10px; /* Réduit les marges */
-            }
-        .table {
+
+        .btn-back::before,
+        .btn-edit::before,
+        .btn-red::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            text-align: center; /* Centre le texte des colonnes */
+            height: 100%;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
         }
-        
-        
+
+        .btn-back::before {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-edit::before {
+            background: linear-gradient(135deg, var(--accent-color), #00b389);
+        }
+
+        .btn-red::before {
+            background: linear-gradient(135deg, var(--negative), #ff0040);
+        }
+
+        .btn-back:hover,
+        .btn-edit:hover,
+        .btn-red:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-back:hover::before,
+        .btn-edit:hover::before,
+        .btn-red:hover::before {
+            opacity: 1;
+        }
+
+        .btn-back:hover,
+        .btn-edit:hover,
+        .btn-red:hover {
+            color: white;
+        }
+
+        /* Delete button styling to match the red button */
+        .delete-form {
+            display: inline-block;
+        }
+
+        .delete-form button {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--negative);
+            transition: all 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(30px, 30px);
+            }
+        }
+
+        /* Media Queries for better responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .header h1::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .table th,
+            .table td {
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn-back, 
+            .btn-edit, 
+            .btn-red {
+                width: 100%;
+                padding: 12px 20px;
+            }
+        }
     </style>
 {% endblock %}
 
 
 {% block body %}
     <div class="container">
-
-        <header class="header">
-            <h1>Transaction</h1>
+        <header class="header header-with-icon {% if transaction.montant > 0 %}income{% else %}expense{% endif %}">
+            <h1>Détail de la transaction</h1>
+            <div class="header-icon">
+                {% if transaction.montant > 0 %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <polyline points="19 12 12 19 5 12"></polyline>
+                    </svg>
+                {% endif %}
+            </div>
         </header>
-    <div class="form-container">
+        
+        <div class="form-container">            
             <table class="table">
                 <tbody>
                     <tr>
-                        <th>numero de transaction</th>
+                        <th>N° transaction</th>
                         <th>{{ transaction.id }}</th>
                     </tr>
                     <tr>
@@ -163,16 +471,39 @@
                     </tr>
                     <tr>
                         <th>Montant</th>
-                        <th>{{ transaction.montant }}</th>
+                        <th class="{% if transaction.montant > 0 %}montant-positif{% else %}montant-negatif{% endif %}">
+                            {{ transaction.montant|number_format(2, ',', ' ') }} €
+                        </th>
                     </tr>
+                    {% if transaction.category is defined and transaction.category %}
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>{{ transaction.category.nom }}</th>
+                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
-      </div><br>
-        <div class="header">
-            <a href="{{ path('app_transaction_index') }}" class="btn-back">back to list</a>
-
-            <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn-edit">edit</a>
-    
-           <a class=".btn-red"> {{ include('transaction/_delete_form.html.twig') }}</a>
         </div>
+        
+        <div class="header action-buttons">
+            <a href="{{ path('app_transaction_index') }}" class="btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Retour à la liste
+            </a>
+
+            <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn-edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+                Modifier
+            </a>
+            
+            <div>
+                {{ include('transaction/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

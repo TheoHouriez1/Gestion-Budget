@@ -1,247 +1,538 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Transaction index{% endblock %}
+{% block title %}Transactions{% endblock %}
 
 {% block stylesheets %}
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #7355ff;
+            --secondary-color: #5940db;
+            --accent-color: #00d8a5;
+            --dark-bg: #0e1121;
+            --card-bg: #171a2f;
+            --card-secondary-bg: #21253b;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --positive: #00d8a5;
+            --negative: #ff5c75;
+            --border-radius: 16px;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
-            color: #1a1a1a;
+            background: linear-gradient(135deg, var(--dark-bg), #141830);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 28px 24px;
+            position: relative;
+        }
+
+        /* Floating particles animation */
+        .container::before,
+        .container::after {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            opacity: 0.03;
+            filter: blur(100px);
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        .container::before {
+            top: 10%;
+            right: 10%;
+        }
+
+        .container::after {
+            bottom: 10%;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            background: var(--accent-color);
+            animation-delay: 5s;
         }
 
         .header {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            background: rgba(23, 26, 47, 0.8);
+            padding: 28px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeInDown 0.8s ease-out forwards;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .header h1 {
-            color: #2d3748;
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .form-container,
-        .table-container {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
+            color: var(--text-primary);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1.6rem;
+            background: linear-gradient(90deg, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -0.5px;
+            position: relative;
         }
 
-        .form-control {
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .table-container {
+            background: rgba(23, 26, 47, 0.7);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 28px;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 0.2s;
+            transform: translateY(20px);
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(115, 85, 255, 0.05), transparent 70%);
+            pointer-events: none;
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
-        }
-
-        select.form-control {
-            background-color: white;
-            cursor: pointer;
-        }
-
-        .btn-container,
-        .table td:last-child {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            
-        }
-        .btn-container{
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .btn-container {
+            background: rgba(23, 26, 47, 0.7);
+            padding: 24px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 0.3s;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .btn-save,
+        .btn-new,
+        .btn-back,
+        .btn-show,
+        .btn-edit {
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
         .btn-save,
         .btn-new {
-            background: linear-gradient(135deg, #4299e1, #3182ce);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-save:hover,
-        .btn-new:hover {
-            background: #3182ce;
+            box-shadow: 0 6px 15px rgba(115, 85, 255, 0.3);
         }
 
         .btn-back {
-            background-color: #718096;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .btn-back:hover {
-            background-color: #4a5568;
-        }
-
-        .btn-show {
-            background-color: #4299e1;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-            text-decoration: none;
-            display: inline-block;
+        .btn-show,
+        .btn-edit {
+            background: rgba(115, 85, 255, 0.15);
+            color: var(--primary-color);
+            border: 1px solid rgba(115, 85, 255, 0.3);
+            min-width: 110px;
+            font-size: 0.9rem;
+            padding: 10px 16px;
         }
 
         .btn-edit {
-            background-color: #ecc94b;
+            background: rgba(0, 216, 165, 0.15);
+            color: var(--accent-color);
+            border: 1px solid rgba(0, 216, 165, 0.3);
+        }
+
+        .btn-save::before,
+        .btn-new::before,
+        .btn-back::before,
+        .btn-show::before,
+        .btn-edit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-back::before {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-show::before {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .btn-edit::before {
+            background: linear-gradient(135deg, var(--accent-color), #00b389);
+        }
+
+        .btn-save:hover,
+        .btn-new:hover,
+        .btn-back:hover,
+        .btn-show:hover,
+        .btn-edit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-save:hover::before,
+        .btn-new:hover::before,
+        .btn-back:hover::before,
+        .btn-show:hover::before,
+        .btn-edit:hover::before {
+            opacity: 1;
+        }
+
+        .btn-back:hover,
+        .btn-show:hover,
+        .btn-edit:hover {
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-            text-decoration: none;
-            display: inline-block;
         }
 
         .table {
             width: 100%;
-            border-collapse: collapse;
-            text-align: center;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: left;
         }
 
         .table th {
-            background-color: #f7fafc;
-            padding: 12px;
-            color: #4a5568;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px 20px;
+            color: var(--text-secondary);
             font-weight: 600;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+        }
+
+        .table th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table th:last-child {
+            border-top-right-radius: 12px;
             text-align: center;
-            border-bottom: 2px solid #e2e8f0;
         }
 
         .table td {
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
             vertical-align: middle;
-            text-align: center;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .table tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .table tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
         }
 
         .table td:last-child {
             display: flex;
-            justify-content: center;
+            justify-content: flex-end; /* Align buttons to the right */
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            text-align: right;
+        }
+
+        /* Mobile card design for transactions */
+        .mobile-transaction-cards {
+            display: none; /* Hidden by default, shown on mobile */
+        }
+
+        .transaction-card {
+            background: rgba(23, 26, 47, 0.8);
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.4s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transaction-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+
+        .transaction-card.income::before {
+            background: var(--positive);
+        }
+
+        .transaction-card.expense::before {
+            background: var(--negative);
+        }
+
+        .transaction-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .transaction-card-description {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        .transaction-card-amount {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .transaction-card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
         .montant-positif {
-            color: #48bb78;
+            color: var(--positive);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .montant-positif::before {
+            content: '+';
         }
 
         .montant-negatif {
-            color: #e53e3e;
+            color: var(--negative);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
         .no-records {
             text-align: center;
-            color: #718096;
-            padding: 20px;
+            color: var(--text-muted);
+            padding: 30px;
+            font-size: 1.1rem;
+            font-style: italic;
         }
 
-        /* Responsive styles */
+        /* Transaction Icons */
+        .transaction-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        .transaction-income {
+            background: rgba(0, 216, 165, 0.15);
+            color: var(--positive);
+        }
+
+        .transaction-expense {
+            background: rgba(255, 92, 117, 0.15);
+            color: var(--negative);
+        }
+
+        /* Transaction container with icon and text */
+        .transaction-details {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(30px, 30px);
+            }
+        }
+
+        /* Media Queries for better responsiveness */
+        @media (max-width: 1024px) {
+            .table td:last-child {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                min-width: auto;
+            }
+        }
+
         @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
             .header {
                 flex-direction: column;
                 gap: 10px;
                 text-align: center;
+                padding: 20px;
             }
 
-            .table th,
-            .table td {
-                font-size: 0.9rem;
-                padding: 10px;
+            .header h1::after {
+                left: 50%;
+                transform: translateX(-50%);
             }
-
-            .btn-show,
-            .btn-edit {
-                flex: 1;
-                max-width: 140px;
+            
+            .table-container, 
+            .btn-container {
+                padding: 20px;
             }
-        }
-
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.2rem;
+            
+            /* Masquer le tableau sur mobile */
+            .desktop-table {
+                display: none;
             }
-
-            .form-control {
-                font-size: 0.9rem;
+            
+            /* Afficher les cartes sur mobile */
+            .mobile-transaction-cards {
+                display: block;
             }
-
+            
             .btn-container {
                 flex-direction: column;
-                background-color: #ffffff;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                margin-bottom: 20px;
-                display: flex;
-                justify-content: space-between;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .btn-save, 
+            .btn-new, 
+            .btn-back {
+                width: 100%;
+                padding: 14px 20px;
+            }
+            
+            /* Style pour les boutons dans les cartes mobiles */
+            .btn-show,
+            .btn-edit {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+                min-width: auto;
             }
         }
     </style>
@@ -250,42 +541,129 @@
 {% block body %}
     <div class="container">
         <header class="header">
-            <h1>Transaction index</h1>
+            <h1>Historique des transactions</h1>
         </header>
 
-        <div class="table-container">
+        <!-- Version desktop avec tableau -->
+        <div class="table-container desktop-table">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Description</th>
-                        <th>Montant</th>
+                        <th style="text-align: center;">Montant</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for transaction in transactions %}
                     <tr>
-                        <td>{{ transaction.description }}</td>
-                        <td class="{% if transaction.montant > 0 %}montant-positif{% else %}montant-negatif{% endif %}">
-                            {{ transaction.montant }} €
+                        <td>
+                            <div class="transaction-details">
+                                <div class="transaction-icon {% if transaction.montant > 0 %}transaction-income{% else %}transaction-expense{% endif %}">
+                                    {% if transaction.montant > 0 %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                                            <polyline points="5 12 12 5 19 12"></polyline>
+                                        </svg>
+                                    {% else %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <polyline points="19 12 12 19 5 12"></polyline>
+                                        </svg>
+                                    {% endif %}
+                                </div>
+                                {{ transaction.description }}
+                            </div>
+                        </td>
+                        <td style="text-align: center;" class="{% if transaction.montant > 0 %}montant-positif{% else %}montant-negatif{% endif %}">
+                            {{ transaction.montant|number_format(2, ',', ' ') }} €
                         </td>
                         <td>
-                            <a href="{{ path('app_transaction_show', {'id': transaction.id}) }}" class="btn-show">Voir</a>
-                            <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn-edit">modifier</a>
+                            <a href="{{ path('app_transaction_show', {'id': transaction.id}) }}" class="btn-show">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                Voir
+                            </a>
+                            <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn-edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                </svg>
+                                Modifier
+                            </a>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="5" class="no-records">no records found</td>
+                        <td colspan="5" class="no-records">Aucune transaction trouvée</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
-            <div class="btn-container">
-                <a href="{{ path('app_home') }}" class="btn-back">Retournée a l'accuil</a>
-                <a href="{{ path('app_transaction_new') }}" class="btn-new">Crées une nouvelle transaction</a>
-            </div>
+
+        <!-- Version mobile avec cartes -->
+        <div class="mobile-transaction-cards">
+            {% for transaction in transactions %}
+                <div class="transaction-card {% if transaction.montant > 0 %}income{% else %}expense{% endif %}">
+                    <div class="transaction-card-header">
+                        <div class="transaction-card-description">
+                            <div class="transaction-icon {% if transaction.montant > 0 %}transaction-income{% else %}transaction-expense{% endif %}">
+                                {% if transaction.montant > 0 %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                                        <polyline points="5 12 12 5 19 12"></polyline>
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <polyline points="19 12 12 19 5 12"></polyline>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            {{ transaction.description }}
+                        </div>
+                        <div class="transaction-card-amount {% if transaction.montant > 0 %}montant-positif{% else %}montant-negatif{% endif %}">
+                            {{ transaction.montant|number_format(2, ',', ' ') }} €
+                        </div>
+                    </div>
+                    <div class="transaction-card-actions">
+                        <a href="{{ path('app_transaction_show', {'id': transaction.id}) }}" class="btn-show">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            Voir
+                        </a>
+                        <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn-edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                            </svg>
+                            Modifier
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-records">Aucune transaction trouvée</div>
+            {% endfor %}
+        </div>
+        
+        <div class="btn-container">
+            <a href="{{ path('app_home') }}" class="btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Retour à l'accueil
+            </a>
+            <a href="{{ path('app_transaction_new') }}" class="btn-new">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Nouvelle transaction
+            </a>
         </div>
     </div>
 {% endblock %}

@@ -1,132 +1,399 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Transaction{% endblock %}
+{% block title %}Édition de Transaction{% endblock %}
 
 {% block stylesheets %}
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #7355ff;
+            --secondary-color: #5940db;
+            --accent-color: #00d8a5;
+            --dark-bg: #0e1121;
+            --card-bg: #171a2f;
+            --card-secondary-bg: #21253b;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --positive: #00d8a5;
+            --negative: #ff5c75;
+            --border-radius: 16px;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
-            color: #1a1a1a;
+            background: linear-gradient(135deg, var(--dark-bg), #141830);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 28px 24px;
+            position: relative;
+        }
+
+        /* Floating particles animation */
+        .container::before,
+        .container::after {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            opacity: 0.03;
+            filter: blur(100px);
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        .container::before {
+            top: 10%;
+            right: 10%;
+        }
+
+        .container::after {
+            bottom: 10%;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            background: var(--accent-color);
+            animation-delay: 5s;
         }
 
         .header {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            background: rgba(23, 26, 47, 0.8);
+            padding: 28px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeInDown 0.8s ease-out forwards;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: rgba(115, 85, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(20px);
         }
 
         .header h1 {
-            color: #2d3748;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.6rem;
+            background: linear-gradient(90deg, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 0;
-            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
         }
 
         .form-container {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: rgba(23, 26, 47, 0.7);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 0.2s;
+            transform: translateY(20px);
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(115, 85, 255, 0.05), transparent 70%);
+            pointer-events: none;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 22px;
+            position: relative;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 600;
-            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
             font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(115, 85, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         select.form-control {
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.05);
             cursor: pointer;
+            appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
         }
 
         .btn-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 16px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-save,
+        .btn-back {
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            min-width: 180px;
         }
 
         .btn-save {
-            background: linear-gradient(135deg, #4299e1, #3182ce);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
+            box-shadow: 0 6px 15px rgba(115, 85, 255, 0.3);
         }
 
-        .btn-save:hover {
-            background: #3182ce;
+        .btn-save::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: -20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            transform: scale(0);
+            z-index: -1;
+        }
+
+        .btn-save:hover::before {
+            transform: scale(10);
         }
 
         .btn-back {
-            background-color: #718096;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-            align : center;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-back::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-save:hover,
+        .btn-back:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-back:hover::before {
+            opacity: 1;
         }
 
         .btn-back:hover {
-            background-color: #4a5568;
+            color: white;
+        }
+
+        /* Transaction Type Styling */
+        .transaction-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .type-option {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .type-option.income {
+            border-color: rgba(0, 216, 165, 0.3);
+        }
+
+        .type-option.expense {
+            border-color: rgba(255, 92, 117, 0.3);
+        }
+
+        .type-option.selected.income {
+            background: rgba(0, 216, 165, 0.15);
+        }
+
+        .type-option.selected.expense {
+            background: rgba(255, 92, 117, 0.15);
+        }
+
+        .type-option .icon {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .type-option .label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(30px, 30px);
+            }
+        }
+
+        /* Media Queries for better responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-control {
+                font-size: 0.9rem;
+                padding: 12px;
+            }
         }
 
         @media (max-width: 600px) {
             .header h1 {
                 font-size: 1.2rem;
             }
-
-            .form-control {
-                font-size: 0.9rem;
-            }
-
+            
             .btn-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-save, 
+            .btn-back {
+                width: 100%;
+                min-width: unset;
+            }
+            
+            .transaction-type-selector {
                 flex-direction: column;
             }
         }
@@ -140,32 +407,44 @@
             <h1>Éditer la transaction N°{{ form.id.vars.value }}</h1>
         </header>
         <div class="form-container">
-            
                 <div class="form-group">
-                    {{ form_label(form.type) }}
+                    {{ form_label(form.type, 'Type de transaction') }}
                     {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
                 <div class="form-group">
-                    <label>Nom de la transaction</label>
-                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}})  }}
+                    {{ form_label(form.description, 'Description') }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Entrez une description de la transaction'}})  }}
                 </div>
 
                 <div class="form-group">
-                    {{ form_label(form.montant) }}
-                    {{ form_widget(form.montant, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_label(form.montant, 'Montant') }}
+                    {{ form_widget(form.montant, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le montant'}}) }}
                 </div>
 
                 <div class="form-group">
-                    {{ form_label(form.category) }}
+                    {{ form_label(form.category, 'Catégorie') }}
                     {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
                 <div class="btn-container">
-                    <button type="button" class="btn-back" onclick="window.location.href='{{ path('app_transaction_index') }}'">Retour</button>
-                    <button type="submit" class="btn-save">{{ button_label|default('Sauvegarder') }}</button>
+                    <button type="button" class="btn-back" onclick="window.location.href='{{ path('app_transaction_index') }}'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="submit" class="btn-save">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        {{ button_label|default('Sauvegarder') }}
+                    </button>
                 </div>
-            {{ form_end(form) }}
         </div>
   </div>
+{{ form_end(form) }}
 {% endblock %}
